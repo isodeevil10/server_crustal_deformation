@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>test image upload</title>
+    </head>
+<body>
+    <form id        =  "uploadForm"
+     enctype   =  "multipart/form-data"
+     action    =  "/api/photo"
+     method    =  "post"
+    >
+    <p> input site_name </p></br>
+    <input type="text" name="site_name" />
+    <p> input image name </p></br>
+    <input type="text" name="image_name" />
+    <p> input image classification  </p></br>
+    <input type="text" name="class_id" />
+    <p> upload image </p></br>
+    <input type="file" name="userPhoto" />
+    <input type="submit" value="Upload Image" name="submit">
+    </form>
+</body>
+</html>
+
