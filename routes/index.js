@@ -485,17 +485,13 @@ try {
             console.error('SQL Connection error: ', err);
             return next(err);
         } else {
-            // let  employee_id = reqObj.employee_id
-            //  let employee_name =reqObj.name1
-            //  let  employee_contact = reqObj.contact
-            //var insertSql6 = "CAll test3('employee_name','employee_contact')";
-        //    var insertValues6 = (
-            //    "employee_id": reqObj.empid,
-              var employee_name =  reqObj.employee_name;
+           
+            var employee_name =  reqObj.employee_name;
             var  employee_contact = reqObj.employee_contact;
             var employee_position =  reqObj.employee_position;
-        //    );
-            var query = conn.query("CAll test3("+"'"+employee_name+"','"+employee_contact+"','"+employee_position+"')", function (err, result) {
+            var query = conn.query(
+                "CAll test3("+"'"+employee_name+"','"+employee_contact+"','"+employee_position+"')",
+             function (err, result) {
                 if (err) { console.log(query)
                     console.error('SQL error: ', err);
                     return next(err);
@@ -514,3 +510,209 @@ try {
 }
 });
 
+router.post('/test', function (req, res, next) {
+    var makeQuery = function(data) {
+        var { employee_name,
+             employee_contact, 
+             employee_position } = data;
+        return `CAll test3('${employee_name}', '${employee_contact}', '${employee_position}')`;
+    };
+
+    req.getConnection(function (err, conn) {
+        if (err) return next(err);
+
+        conn.query(makeQuery(req.body), function (err, res) {
+            if (err) return next(err);
+
+            res.json({
+                "test_id": res.insertId
+            });
+        });
+    });
+});
+
+
+
+
+router.post('/contactpersondetails', function (req, res, next) {
+try {
+    var reqObj = req.body;
+    console.log(reqObj);
+    req.getConnection(function (err, conn) {
+        if (err) {
+            console.error('SQL Connection error: ', err);
+            return next(err);
+        } else {
+           
+            var first_name =  reqObj.first_name;
+            var  last_name = reqObj.last_name;
+            var position =  reqObj.position;
+            var address_one =  reqObj.address_one;
+            var address_two = reqObj.address_two;
+            var city =  reqObj.city;
+            var province =  reqObj.province;
+            var  contact_number = reqObj.contact_number;
+            var organization =  reqObj.organization;
+            var email_add =  reqObj.email_add;
+           
+
+            var query = conn.query(
+                " CAll contactperson("+"'"+first_name+"','"+last_name+"','"+position+"','"+address_one+"','"+address_two+"','"+city+"','"+province+"','"+contact_number+"','"+organization+"','"+email_add+"')",
+             function (err, result) {
+                if (err) { console.log(query)
+                    console.error('SQL error: ', err);
+                    return next(err);
+                }
+                console.log(result);
+                var test_Id = result.insertId;
+                res.json({
+                    "test_id": test_Id 
+                });
+            });
+        } 
+    }); 
+} catch (ex) { 
+    console.error("Internal error:" + ex); 
+    return next(ex);
+}
+});
+
+
+router.post('/gpsstaffinformation', function (req, res, next) {
+try {
+    var reqObj = req.body;
+    console.log(reqObj);
+    req.getConnection(function (err, conn) {
+        if (err) {
+            console.error('SQL Connection error: ', err);
+            return next(err);
+        } else {
+           
+            var first_name =  reqObj.first_name;
+            var  last_name = reqObj.last_name;
+            var position_id =  reqObj.position;
+            var contact_num =  reqObj.contact_num;
+            var division_id = reqObj.division_id;
+            var email_address =  reqObj.email_address;
+            var office_location =  reqObj.office_location;
+         
+           
+
+            var query = conn.query(
+                "CAll gpsstaff("+"'"+first_name+"','"+last_name+"','"+position_id+"','"+contact_num+"','"+division_id+"','"+email_address+"','"+office_location+"')",
+             function (err, result) {
+                if (err) { console.log(query)
+                    console.error('SQL error: ', err);
+                    return next(err);
+                }
+                console.log(result);
+                var test_Id = result.insertId;
+                res.json({
+                    "test_id": test_Id 
+                });
+            });
+        } 
+    }); 
+} catch (ex) { 
+    console.error("Internal error:" + ex); 
+    return next(ex);
+}
+});
+
+// router.post('/logsheetdetails', function (req, res, next) {
+//     var makeQuery = function(data) {
+//         var { logsheet_date,site_id,julian_day,
+//             marker,receiver_id,antenna_id,height,
+//             north, east, south, west,
+//              time_start, time_end,
+//             azimuth, scan_log_id,
+//             power_source, failure_time,
+//             receiver_status, antenna_status,
+//             rod_num, rod_correction,
+//             avg_slant_height,netmask, ip_add,
+//             gateway,dns,local_tcp_port, latittude,longitude,site_sketch_id,
+//             observed_situation,lodging_road_information,
+//             contact_id,others} = data;
+//         return `CAll logsheet('${logsheet_date}', '${site_id}', '${julian_day}', '${marker}', '${receiver_id}', '${antenna_id}', '${height}', '${north}', '${east}', '${south}', '${west}', '${time_start}', '${time_end}', '${azimuth}', '${scan_log_id}', '${power_source}', '${failure_time}', '${receiver_status}', '${antenna_status}', '${rod_num}', '${rod_correction}', '${avg_slant_height}', '${ip_add}', '${netmask}', '${gateway}', '${dns}', '${local_tcp_port}', '${latittude}', '${longitude}', '${site_sketch_id}', '${observed_situation}', '${lodging_road_information}', '${contact_id}', '${others}')`;
+//     };
+
+//     req.getConnection(function (err, conn) {
+//         if (err) return next(err);
+
+//         conn.query(makeQuery(req.body), function (err, res) {
+//             if (err) return next(err);
+
+//             // res.json({
+//             //     "test_id": res.insertId
+//             // });
+//         });
+//     });
+// });
+
+
+
+router.post('/logsheet', function (req, res, next) {
+try {
+    var reqObj = req.body;
+    console.log(reqObj);
+    req.getConnection(function (err, conn) {
+        if (err) {
+            console.error('SQL Connection error: ', err);
+            return next(err);
+        } else {
+           
+            var logsheet_date             = reqObj.logsheet_date;  
+            // var site_id                   = reqObj.site_id  ;
+            var julian_day                = reqObj.julian_day; 
+            var marker                    = reqObj.marker  ;
+            // var receiver_id               = reqObj.receiver_id ;
+            // var antenna_id                = reqObj.antenna_id ;
+            var height                    = reqObj.height ;
+            var north                     = reqObj.north ;
+            var east                      = reqObj.east ;
+            var south                     = reqObj.south;
+            var west                      = reqObj.west  ;
+            var time_start                = reqObj.time_start; 
+            var time_end                  = reqObj.time_end ;
+            var azimuth                   = reqObj.azimuth  ;
+            // var scan_log_id               = reqObj.scan_log_id; 
+            // var power_source              = reqObj.power_source;  
+            var failure_time              = reqObj.failure_time ; 
+            var receiver_status           = reqObj.receiver_status; 
+            var antenna_status            = reqObj.antenna_status  ;
+            var rod_num                   = reqObj.rod_num;
+            var rod_correction            = reqObj.rod_correction; 
+            var avg_slant_height          = reqObj.avg_slant_height; 
+            var ip_add                    = reqObj.ip_add;
+            var netmask                   = reqObj.netmask;  
+            var gateway                   = reqObj.gateway ;
+            var dns                       = reqObj.dns ;
+            var local_tcp_port            = reqObj.local_tcp_port;
+            var latittude                 = reqObj.latittude  ;
+            var longitude                 = reqObj.longitude  ;
+            // var site_sketch_id            = reqObj.site_sketch_id ; 
+            var observed_situation        = reqObj.observed_situation  ;
+            var lodging_road_information  = reqObj.lodging_road_information;
+            // var contact_id                = reqObj.contact_id ;
+            var others                    = reqObj.others 
+           
+
+            var query = conn.query("CAll logsheet("+"'" +logsheet_date +"', '"+ julian_day+ "', '" +marker+ "','" +height+ "', '" +north+ "', '" +east +"', '" +south+ "', '"+ west+ "', '"+ time_start +"', '"+ time_end+ "', '"+ azimuth+ "', '" +failure_time+ "', '"+ receiver_status +"', '" +antenna_status+ "', '"+ rod_num+ "', '" +rod_correction+ "', '"+ avg_slant_height+ "', '"+ ip_add +"', '" +netmask+ "', '" +gateway+ "', '" +dns+ "', '" +local_tcp_port+ "', '" +latittude + "', '" +longitude+"', '"+ observed_situation+ "', '" +lodging_road_information+ "', '" +others+ "')",
+             function (err, result) {
+                if (err) { console.log(query)
+                    console.error('SQL error: ', err);
+                    return next(err);
+                }
+                console.log(result);
+                var test_Id = result.insertId;
+                res.json({
+                    "test_id": test_Id 
+                });
+            });
+        } 
+    }); 
+} catch (ex) { 
+    console.error("Internal error:" + ex); 
+    return next(ex);
+}
+});

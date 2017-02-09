@@ -25,20 +25,20 @@ router.post('/api/photo', function (req, res) {
 
     let site_name = req.body.site_name
     let image_name = req.body.image_name
-    let image_path = req.file.path + Date() + "-" 
-    let image_classification_id = req.body.class_id
+    let image_path = req.file.path + Date() + "-" +site_name 
+    let image_clas_id = req.body.class_id
 
     try {
-      req.getConnection(function (err, conn) {
+      req.getConnection(function (err, conn) { 
         if (err) {
           console.error('SQL Connection error: ', err);
           return next(err);
         } else {
-          var insertSql2 = "INSERT INTO site_photos SET ?";
+          var insertSql2 = "INSERT INTO site_images SET ?";
           var insertValues2 = {
-            "image_classification_id": image_classification_id,
+            "image_clas_id": image_clas_id,
             "image_path": image_path,
-            "site_name": site_name,
+            // "site_name": site_name,
             "image_name": image_name
 
           };
