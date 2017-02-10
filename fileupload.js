@@ -6,7 +6,9 @@ var storage = multer.diskStorage({
     callback(null, './uploads');
   },
   filename: function (req, file, callback) {
-    callback(null, file.originalname);
+    
+    callback(null, +Date.now()+'-'+file.originalname);
+
   }
 });
 var upload = multer({
@@ -25,7 +27,7 @@ router.post('/api/photo', function (req, res) {
 
     let site_name = req.body.site_name
     let image_name = req.body.image_name
-    let image_path = req.file.path + Date() + "-" +site_name 
+    let image_path = req.file.path
     let image_clas_id = req.body.class_id
 
     try {

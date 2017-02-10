@@ -433,49 +433,6 @@ router.post('/powersourceinformation', function (req, res, next) {
 //     });
 // }
 
-
-
-
-
-
-/* Get Employee Service. */
-router.get('/testgettinginfo', function (req, res, next) {
-    try {
-        var employee_id = req.param('employee_id');
-        //var employee_name = req.param('employee_name');
-        /*  var query = url.parse(req.url,true).query;
-                  console.log(query);
-        var roleId = query.roleId;
-        var deptId = query.deptId;*/
-        console.log(employee_id);
-        //console.log(employee_name);
-        req.getConnection(function (err, conn) {
-            if (err) {
-                console.error('SQL Connection error: ', err);
-                return next(err);
-            } else {
-                conn.query('CALL test3(?)', employee_id, function (err, rows, fields) {
-                    if (err) {
-                        console.error('SQL error: ', err);
-                        return next(err);
-                    }
-                    var resEmp = [];
-                    for (var empIndex in rows) {
-                        var empObj = rows[empIndex];
-                        resEmp.push(empObj);
-                    }
-                    res.json(resEmp);
-                });
-            }
-        });
-    } catch (ex) { 
-        console.error("Internal error:" + ex);
-        return next(ex);
-    }
-});
- 
-
-
 router.post('/test', function (req, res, next) {
 try {
     var reqObj = req.body;
@@ -716,3 +673,129 @@ try {
     return next(ex);
 }
 });
+
+
+
+
+/* Get antennainformation Service. */
+router.get('/gettingantennainfo', function (req, res, next) {
+    try {
+        var antenna_serialnumber = req.param('id');
+        //var employee_name = req.param('employee_name');
+        /*  var query = url.parse(req.url,true).query;
+                  console.log(query);
+        var roleId = query.roleId;
+        var deptId = query.deptId;*/
+        console.log(antenna_serialnumber);
+        //console.log(employee_name);
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query("CALL getantennainfo("+"'"+antenna_serialnumber+"')", function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+
+
+
+/* Get receiverinformation Service. */
+router.get('/gettingreceiverinfo', function (req, res, next) {
+    try {
+        var serial_number = req.param('id');
+        //var employee_name = req.param('employee_name');
+        /*  var query = url.parse(req.url,true).query;
+                  console.log(query);
+        var roleId = query.roleId;
+        var deptId = query.deptId;*/
+        console.log(serial_number);
+        //console.log(employee_name);
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query("CALL getreceiverinfo("+"'"+serial_number+"')", function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+
+/* to get site_information */
+
+
+
+/* Get get site information Service. */
+router.get('/getsiteinformation', function (req, res, next) {
+    try {
+        var site_name = req.param('id');
+        //var employee_name = req.param('employee_name');
+        /*  var query = url.parse(req.url,true).query;
+                  console.log(query);
+        var roleId = query.roleId;
+        var deptId = query.deptId;*/
+        console.log(site_name);
+        //console.log(employee_name);
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query("CALL getsiteinformation("+"'"+site_name+"')", function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+
+
+
+
+
+
