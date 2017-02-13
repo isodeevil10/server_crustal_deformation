@@ -8,128 +8,6 @@ var router = express.Router();
 
 module.exports = router;
 
-/* Create Employee Service. 
-   staff_id just leave it blank
-*/
-router.post('/userinformationdetails', function (req, res, next) {
-    try {
-        var reqObj = req.body;
-        console.log(reqObj);
-        req.getConnection(function (err, conn) {
-            if (err) {
-                console.error('SQL Connection error: ', err);
-                return next(err);
-            } else {
-                var insertSql = "INSERT INTO gps_staff_info SET ?";
-                var insertValues = {
-                    "first_name": reqObj.firstName,
-                    "last_name": reqObj.lastName,
-                    "position_id": reqObj.position,
-                    "contact_num": reqObj.contactNumber,
-                    "nicknames": reqObj.nickname,
-                    "division_id": reqObj.division,
-                    "email_address": reqObj.emailadd,
-                    "office_location": reqObj.officelocation
-                };
-                var query = conn.query(insertSql, insertValues, function (err, result) {
-                    if (err) {
-                        console.error('SQL error: ', err);
-                        return next(err);
-                    }
-                    console.log(result);
-                    var Employee_Id = result.insertId;
-                    res.json({
-                        "Emp_id": Employee_Id
-                    });
-                });
-            }
-        });
-    } catch (ex) {
-        console.error("Internal error:" + ex);
-        return next(ex);
-    }
-});
-
-// /* Create Contact Service. */
-router.post('/contactinformationdetails', function (req, res, next) {
-    try {
-        var reqObj = req.body;
-        console.log(reqObj);
-        req.getConnection(function (err, conn) {
-            if (err) {
-                console.error('SQL Connection error: ', err);
-                return next(err);
-            } else {
-                var insertSql1 = "INSERT INTO contact_person SET ? ";
-
-                var insertValues1 = {
-                    "site_name": reqObj.sitename,
-                    "first_name": reqObj.firstName,
-                    "last_name": reqObj.lastName,
-                    "position": reqObj.position,
-                    "contact_number": reqObj.contactnumber,
-                    "organization": reqObj.organization,
-                    "email_add": reqObj.emailAdd,
-                };
-                var query = conn.query(insertSql1, insertValues1, function (err, result) {
-                    if (err) {
-                        console.error('SQL error: ', err);
-                        return next(err);
-                    }
-                    console.log(result);
-                    var Contact_Id = result.insertId;
-                    res.json({
-                        "Cont_id": Contact_Id
-                    });
-                });
-            }
-        });
-    } catch (ex) {
-        console.error("Internal error:" + ex);
-        return next(ex);
-    }
-});
-
-
-
-/* Create Contact address Service. */
-router.post('/contactaddressdetails', function (req, res, next) {
-    try {
-        var reqObj = req.body;
-        console.log(reqObj);
-        req.getConnection(function (err, conn) {
-            if (err) {
-                console.error('SQL Connection error: ', err);
-                return next(err);
-            } else {
-                var insertSql4 = "INSERT INTO address_contactperson SET ? ";
-
-                var insertValues4 = {
-                    "address_name": reqObj.addressname,
-                    "address_one": reqObj.addOne,
-                    "address_two": reqObj.addTwo,
-                    "city": reqObj.city,
-                    "province": reqObj.prov
-                };
-                var query = conn.query(insertSql4, insertValues4, function (err, result) {
-                    if (err) {
-                        console.error('SQL error: ', err);
-                        return next(err);
-                    }
-                    console.log(result);
-                    var Contadd_Id = result.insertId;
-                    res.json({
-                        "Conadd_id": Contadd_Id
-                    });
-                });
-            }
-        });
-    } catch (ex) {
-        console.error("Internal error:" + ex);
-        return next(ex);
-    }
-});
-
 
 /* Create receiver information. */
 router.post('/receiverinformation', function (req, res, next) {
@@ -369,127 +247,9 @@ router.post('/powersourceinformation', function (req, res, next) {
 
 
 
-// /* Create Contact Service. */
-// router.post('/contactinformationdetails', function (req, res, next) {
-//     try {
-//         var reqObj = req.body;
-//         console.log(reqObj);
-//         req.getConnection(function (err, conn) {
-//             if (err) {
-//                 console.error('SQL Connection error: ', err);
-//                 return next(err);
-//             } else {
-//                 var insertSql1 = "INSERT INTO contact_person SET ? ";
-
-//                 var insertValues1 = {
-//                     "site_name": reqObj.sitNam,
-//                     "first_name": reqObj.firName,
-//                     "last_name": reqObj.lastName,
-//                     "position": reqObj.posId,
-//                     "contact_number": reqObj.conNum,
-//                     "organization": reqObj.orga1,
-//                     "email_add": reqObj.emaAdd1,
-//                 };
-//                 var query = conn.query(insertSql1, insertValues1, function (err, result) {
-//                     if (err) {
-//                         console.error('SQL error: ', err);
-//                         return next(err);
-//                     }
-//                     console.log(result);
-//                     var Contact_Id = result.insertId;
-//                     res.json({
-//                         "Cont_id": Contact_Id
-//                     });
-//                     query.end()
-//                     saveContactPersonAddress(reqObj, conn)
-                    
-//                 });
-//             }
-//         });
-//     } catch (ex) {
-//         console.error("Internal error:" + ex);
-//         return next(ex);
-//     }
-// });
 
 
-
-// function saveContactPersonAddress(reqObj, conn) {
-//     let insertSql5 = "INSERT INTO address_contactperson SET ? ";
-
-//     let insertValues5 = {
-//         "address_name": reqObj.addNam,
-//         "address_one": reqObj.addOne,
-//         "address_two": reqObj.addTwo,
-//         "city": reqObj.city,
-//         "province": reqObj.prov
-//     };
-//         let query1 = conn.query(insertSql5, insertValues5, function (err, result) {
-//         if (err) {
-//             console.error('SQL error: ', err);
-//             return next(err);
-//         }
-//         console.log(result);
-//     });
-// }
-
-router.post('/test', function (req, res, next) {
-try {
-    var reqObj = req.body;
-    console.log(reqObj);
-    req.getConnection(function (err, conn) {
-        if (err) {
-            console.error('SQL Connection error: ', err);
-            return next(err);
-        } else {
-           
-            var employee_name =  reqObj.employee_name;
-            var  employee_contact = reqObj.employee_contact;
-            var employee_position =  reqObj.employee_position;
-            var query = conn.query(
-                "CAll test3("+"'"+employee_name+"','"+employee_contact+"','"+employee_position+"')",
-             function (err, result) {
-                if (err) { console.log(query)
-                    console.error('SQL error: ', err);
-                    return next(err);
-                }
-                console.log(result);
-                var test_Id = result.insertId;
-                res.json({
-                    "test_id": test_Id 
-                });
-            });
-        } 
-    }); 
-} catch (ex) { 
-    console.error("Internal error:" + ex); 
-    return next(ex);
-}
-});
-
-router.post('/test', function (req, res, next) {
-    var makeQuery = function(data) {
-        var { employee_name,
-             employee_contact, 
-             employee_position } = data;
-        return `CAll test3('${employee_name}', '${employee_contact}', '${employee_position}')`;
-    };
-
-    req.getConnection(function (err, conn) {
-        if (err) return next(err);
-
-        conn.query(makeQuery(req.body), function (err, res) {
-            if (err) return next(err);
-
-            res.json({
-                "test_id": res.insertId
-            });
-        });
-    });
-});
-
-
-
+/* input contact person details */
 
 router.post('/contactpersondetails', function (req, res, next) {
 try {
@@ -535,6 +295,8 @@ try {
 });
 
 
+
+/* input gpsstaff information*/
 router.post('/gpsstaffinformation', function (req, res, next) {
 try {
     var reqObj = req.body;
@@ -576,38 +338,8 @@ try {
 }
 });
 
-// router.post('/logsheetdetails', function (req, res, next) {
-//     var makeQuery = function(data) {
-//         var { logsheet_date,site_id,julian_day,
-//             marker,receiver_id,antenna_id,height,
-//             north, east, south, west,
-//              time_start, time_end,
-//             azimuth, scan_log_id,
-//             power_source, failure_time,
-//             receiver_status, antenna_status,
-//             rod_num, rod_correction,
-//             avg_slant_height,netmask, ip_add,
-//             gateway,dns,local_tcp_port, latittude,longitude,site_sketch_id,
-//             observed_situation,lodging_road_information,
-//             contact_id,others} = data;
-//         return `CAll logsheet('${logsheet_date}', '${site_id}', '${julian_day}', '${marker}', '${receiver_id}', '${antenna_id}', '${height}', '${north}', '${east}', '${south}', '${west}', '${time_start}', '${time_end}', '${azimuth}', '${scan_log_id}', '${power_source}', '${failure_time}', '${receiver_status}', '${antenna_status}', '${rod_num}', '${rod_correction}', '${avg_slant_height}', '${ip_add}', '${netmask}', '${gateway}', '${dns}', '${local_tcp_port}', '${latittude}', '${longitude}', '${site_sketch_id}', '${observed_situation}', '${lodging_road_information}', '${contact_id}', '${others}')`;
-//     };
 
-//     req.getConnection(function (err, conn) {
-//         if (err) return next(err);
-
-//         conn.query(makeQuery(req.body), function (err, res) {
-//             if (err) return next(err);
-
-//             // res.json({
-//             //     "test_id": res.insertId
-//             // });
-//         });
-//     });
-// });
-
-
-
+/**  input logsheet data*/
 router.post('/logsheet', function (req, res, next) {
 try {
     var reqObj = req.body;
@@ -655,6 +387,58 @@ try {
            
 
             var query = conn.query("CAll logsheet("+"'" +logsheet_date +"', '"+ julian_day+ "', '" +marker+ "','" +height+ "', '" +north+ "', '" +east +"', '" +south+ "', '"+ west+ "', '"+ time_start +"', '"+ time_end+ "', '"+ azimuth+ "', '" +failure_time+ "', '"+ receiver_status +"', '" +antenna_status+ "', '"+ rod_num+ "', '" +rod_correction+ "', '"+ avg_slant_height+ "', '"+ ip_add +"', '" +netmask+ "', '" +gateway+ "', '" +dns+ "', '" +local_tcp_port+ "', '" +latittude + "', '" +longitude+"', '"+ observed_situation+ "', '" +lodging_road_information+ "', '" +others+ "')",
+             function (err, result) {
+                if (err) { console.log(query)
+                    console.error('SQL error: ', err);
+                    return next(err);
+                }
+                console.log(result);
+                var test_Id = result.insertId;
+                res.json({
+                    "test_id": test_Id 
+                });
+            });
+        } 
+    }); 
+} catch (ex) { 
+    console.error("Internal error:" + ex); 
+    return next(ex);
+}
+});
+
+
+
+
+
+/* input site information*/
+router.post('/inputsiteinformation', function (req, res, next) {
+try {
+    var reqObj = req.body;
+    console.log(reqObj);
+    req.getConnection(function (err, conn) {
+        if (err) {
+            console.error('SQL Connection error: ', err);
+            return next(err);
+        } else {
+           
+            var site_name =  reqObj.site_name;
+            var  last_update = reqObj.last_update;
+            var latitude =  reqObj.latitude;
+            var longitude =  reqObj.longitude;
+            // var receiver_sn = reqObj.receiver_sn;
+            // var antenna_sn =  reqObj.antenna_sn;
+            // var powersource_sn =  reqObj.powersource_sn;
+            // var contact_id = reqObj.contact_id;
+            var address_one = reqObj.address_one;
+            var address_two =  reqObj.address_two;
+            var city = reqObj.city;
+            var province = reqObj.province;
+            // var gallery_name = reqObj.gallery_name;
+         
+           
+
+            var query = conn.query(
+                "CAll siteiformation("+"'"+site_name+"','"+last_update+"','"+latitude+"','"+longitude+"','"+address_one+"','"+address_two+"','"+city+"','"+province+"')",
              function (err, result) {
                 if (err) { console.log(query)
                     console.error('SQL error: ', err);
@@ -753,7 +537,7 @@ router.get('/gettingreceiverinfo', function (req, res, next) {
 });
 
 
-/* to get site_information */
+
 
 
 
