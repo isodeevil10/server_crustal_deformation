@@ -9,6 +9,7 @@ var users = require('./routes/users');
 var mysql =require('mysql');
 var connection = require("express-myconnection");
 var fileupload = require("./fileupload");
+var cors = require("cors")
 
 var app = express();
 //create sql connection
@@ -32,6 +33,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(cors())
+
 app.use('/', index);
 app.use('/users', users);
 
@@ -54,3 +57,5 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+

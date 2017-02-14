@@ -8,6 +8,32 @@ var router = express.Router();
 
 module.exports = router;
 
+///server side velocity computation
+router.get('/compute', function (req, res) {
+    let PythonShell = require('python-shell');
+    let pyshell = new PythonShell('./compute_input.py', { mode: 'json' });
+
+    let data = req.query
+
+    pyshell.options
+
+    pyshell.send(data)
+
+    pyshell.on('message', function (message) {
+    // received a message sent from the Python script (a simple "print" statement)
+        res.send(message)
+        // console.log(message);
+    });
+
+    // end the input stream and allow the process to exit
+    pyshell.end(function (err) {
+        if (err) throw err;
+        console.log('python script for time series processing done');
+    });
+
+})
+
+
 
 /* Create receiver information. */
 router.post('/receiverinformation', function (req, res, next) {
@@ -83,51 +109,6 @@ router.post('/antennainformation', function (req, res, next) {
 });
 
 
-
-
-
-
-/* Create site information. */
-router.post('/siteinformation', function (req, res, next) {
-    try {
-        var reqObj = req.body;
-        console.log(reqObj);
-        req.getConnection(function (err, conn) {
-            if (err) {
-                console.error('SQL Connection error: ', err);
-                return next(err);
-            } else {
-                var insertSql5 = "INSERT INTO site_information SET ?";
-                var insertValues5 = {
-                    "site_name": reqObj.sitename,
-                    "latitude": reqObj.latitude,
-                    "longitude": reqObj.longitude,
-                    "receiver_sn": reqObj.receiversn,
-                    "antenna_sn":reqObj.antennasn,
-                    "powersource_sn": reqObj.powersourcesn,
-                    "survey_type": reqObj.surveytype
-                    
-
-                };
-                var query = conn.query(insertSql5, insertValues5, function (err, result) {
-                    if (err) {
-                        console.error('SQL error: ', err);
-                        return next(err);
-                    }
-                    console.log(result);
-                    var site_Id = result.insertId;
-                    res.json({
-                        "site_id": site_Id
-                    });
-                });
-            }
-        });
-    } catch (ex) {
-        console.error("Internal error:" + ex);
-        return next(ex);
-    }
-});
-
 /* Create fieldwork information. */
 router.post('/fieldworkinformation', function (req, res, next) {
     try {
@@ -166,47 +147,6 @@ router.post('/fieldworkinformation', function (req, res, next) {
         return next(ex);
     }
 });
-
-
-
-/* Create incident report information. */
-router.post('/reportinformation', function (req, res, next) {
-    try {
-        var reqObj = req.body;
-        console.log(reqObj);
-        req.getConnection(function (err, conn) {
-            if (err) {
-                console.error('SQL Connection error: ', err);
-                return next(err);
-            } else {
-                var insertSql5 = "INSERT INTO incident_report SET ?";
-                var insertValues5 = {
-                   "incident_report": reqObj.sitename,
-                   "date": reqObj.date,
-                   "comment":reqObj.comment,
-                   "incident_report_type": reqObj.surveytype
-                
-                };
-                var query = conn.query(insertSql5, insertValues5, function (err, result) {
-                    if (err) {
-                        console.error('SQL error: ', err);
-                        return next(err);
-                    }
-                    console.log(result);
-                    var site_Id = result.insertId;
-                    res.json({
-                        "site_id": site_Id
-                    });
-                });
-            }
-        });
-    } catch (ex) {
-        console.error("Internal error:" + ex);
-        return next(ex);
-    }
-});
-
-
 
 
 /* Create power source information. */
@@ -309,16 +249,18 @@ try {
            
             var first_name =  reqObj.first_name;
             var  last_name = reqObj.last_name;
+            var nickname = reqObj.nickname;
             var position_id =  reqObj.position;
             var contact_num =  reqObj.contact_num;
-            var division_id = reqObj.division_id;
+            var division_name = reqObj.division_name;
             var email_address =  reqObj.email_address;
             var office_location =  reqObj.office_location;
+            var birthday =  reqObj.birthday
          
            
 
             var query = conn.query(
-                "CAll gpsstaff("+"'"+first_name+"','"+last_name+"','"+position_id+"','"+contact_num+"','"+division_id+"','"+email_address+"','"+office_location+"')",
+                "CAll gpsstaff("+"'"+first_name+"','"+last_name+"','"+nickname+"','"+position_id+"','"+contact_num+"','"+division_name+"','"+email_address+"','"+office_location+"','"+birthday+"')",
              function (err, result) {
                 if (err) { console.log(query)
                     console.error('SQL error: ', err);
@@ -351,11 +293,11 @@ try {
         } else {
            
             var logsheet_date             = reqObj.logsheet_date;  
-            // var site_id                   = reqObj.site_id  ;
+            var site_id                   = reqObj.site_id  ;
             var julian_day                = reqObj.julian_day; 
             var marker                    = reqObj.marker  ;
-            // var receiver_id               = reqObj.receiver_id ;
-            // var antenna_id                = reqObj.antenna_id ;
+            var receiver_id               = reqObj.receiver_id ;
+            var antenna_id                = reqObj.antenna_id ;
             var height                    = reqObj.height ;
             var north                     = reqObj.north ;
             var east                      = reqObj.east ;
@@ -364,8 +306,8 @@ try {
             var time_start                = reqObj.time_start; 
             var time_end                  = reqObj.time_end ;
             var azimuth                   = reqObj.azimuth  ;
-            // var scan_log_id               = reqObj.scan_log_id; 
-            // var power_source              = reqObj.power_source;  
+            var scan_log_id               = reqObj.scan_log_id; 
+            var power_source              = reqObj.power_source;  
             var failure_time              = reqObj.failure_time ; 
             var receiver_status           = reqObj.receiver_status; 
             var antenna_status            = reqObj.antenna_status  ;
@@ -425,20 +367,20 @@ try {
             var  last_update = reqObj.last_update;
             var latitude =  reqObj.latitude;
             var longitude =  reqObj.longitude;
-            // var receiver_sn = reqObj.receiver_sn;
-            // var antenna_sn =  reqObj.antenna_sn;
-            // var powersource_sn =  reqObj.powersource_sn;
-            // var contact_id = reqObj.contact_id;
+            var receiver_sn = reqObj.receiver_sn;
+            var antenna_sn =  reqObj.antenna_sn;
+            var powersource_sn =  reqObj.powersource_sn;
+            var contact_id = reqObj.contact_id;
             var address_one = reqObj.address_one;
             var address_two =  reqObj.address_two;
             var city = reqObj.city;
             var province = reqObj.province;
-            // var gallery_name = reqObj.gallery_name;
+            var gallery_name = reqObj.gallery_name;
          
            
 
             var query = conn.query(
-                "CAll siteiformation("+"'"+site_name+"','"+last_update+"','"+latitude+"','"+longitude+"','"+address_one+"','"+address_two+"','"+city+"','"+province+"')",
+                "CAll siteiformation("+"'"+site_name+"','"+last_update+"','"+latitude+"','"+longitude+"','"+receiver_sn+"','"+antenna_sn+"','"+powersource_sn+"','"+contact_id+"','"+address_one+"','"+address_two+"','"+city+"','"+province+"','"+gallery_name+"')",
              function (err, result) {
                 if (err) { console.log(query)
                     console.error('SQL error: ', err);
@@ -537,10 +479,6 @@ router.get('/gettingreceiverinfo', function (req, res, next) {
 });
 
 
-
-
-
-
 /* Get get site information Service. */
 router.get('/getsiteinformation', function (req, res, next) {
     try {
@@ -579,7 +517,617 @@ router.get('/getsiteinformation', function (req, res, next) {
 
 
 
+/* Create sitename information. */
+router.post('/postsitename', function (req, res, next) {
+    try {
+        var reqObj = req.body;
+        console.log(reqObj);
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+                var insertSql2 = "INSERT INTO site_name SET ?";
+                var insertValues2 = {
+                    "site_name": reqObj.site_name
+                    // "receiver_type": reqObj.receivertype,
+                    // "part_number": reqObj.partnumber
+
+                };
+                var query = conn.query(insertSql2, insertValues2, function (err, result) {
+                    if (err) {
+                        console.error('SQL error: ', err);
+                        return next(err);
+                       
+                    }
+                    console.log(result);
+                    var Receiver_Id = result.insertId;
+                    res.json({
+                        "rece_id": Receiver_Id
+                    });
+                });
+            }
+        });
+    } catch (ex) {
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
 
 
 
 
+/* Get get site information Service. */
+router.get('/sitename', function (req, res, next) {
+    try {
+        
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from site_name', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+
+/* Get get gps staff information Service. */
+router.get('/gpsstaffname', function (req, res, next) {
+    try {
+        // var name = req.param('id');
+        // //var employee_name = req.param('employee_name');
+        // /*  var query = url.parse(req.url,true).query;
+        //           console.log(query);
+        // var roleId = query.roleId;
+        // var deptId = query.deptId;*/
+        // console.log(name);
+        //console.log(employee_name);
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT first_name, last_name from gps_staff_info', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+/* Get all receiver information Service. */
+router.get('/allreceiversn', function (req, res, next) {
+    try {
+        // var name = req.param('id');
+        // //var employee_name = req.param('employee_name');
+        // /*  var query = url.parse(req.url,true).query;
+        //           console.log(query);
+        // var roleId = query.roleId;
+        // var deptId = query.deptId;*/
+        // console.log(name);
+        //console.log(employee_name);
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT serial_number, receiver_type, part_number from receiver_information', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+/* Get all receiver information Service. */
+router.get('/allantennasn', function (req, res, next) {
+    try {
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT antenna_serialnumber, antenna_charcode, antenna_name,antenna_type from antenna_information', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+
+
+/* Get all powersource information Service. */
+router.get('/allpowersourcesn', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT ps_serial_number, comment from powersource', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+
+
+/* Get all fieldwork information Service. */
+router.get('/allfieldwork', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from fieldwork_table', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+/* Get all contact person information Service. */
+router.get('/allcontactperson', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from contact_person', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+/* Get all gallery_name information Service. */
+router.get('/allgalleryinfo', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from gallery', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+/* Get all associated agency information Service. */
+router.get('/allassociatedagency', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from associated_agency', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+/* Get all data table information Service. */
+router.get('/alldatatable', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from data_table', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+
+/* Get all image class information Service. */
+router.get('/allimageclass', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from image_class', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+
+/* Get all logistical notes information Service. */
+router.get('/alllogisticalnote', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from logistical_notes', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+/* Get all observer information Service. */
+router.get('/allobserver', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from observer', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+
+/* Get all office division information Service. */
+router.get('/allofficedivision', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from office_division', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+/* Get all position information Service. */
+router.get('/allposition', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from position', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+/* Get all scanned logsheet information Service. */
+router.get('/allscannedlogsheet', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from scanned_logsheet', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+/* Get all site images information Service. */
+router.get('/allsiteimages', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from site_iamges', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+
+
+/* Get all site sketch images information Service. */
+router.get('/allsitesketch', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from site_sketch', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
+
+
+/* Get all velocity information Service. */
+router.get('/allvelocity', function (req, res, next) {
+    try {
+    
+        req.getConnection(function (err, conn) {
+            if (err) {
+                console.error('SQL Connection error: ', err);
+                return next(err);
+            } else {
+               var query= conn.query('SELECT * from velocity', function (err, rows, fields) {
+                    if (err) {console.log(query)
+                        console.error('SQL error: ', err);
+                        return next(err);
+                    }
+                    var resEmp = [];
+                    for (var empIndex in rows) {
+                        var empObj = rows[empIndex];
+                        resEmp.push(empObj);
+                    }
+                    res.json(resEmp);
+                });
+            }
+        });
+    } catch (ex) { 
+        console.error("Internal error:" + ex);
+        return next(ex);
+    }
+});
