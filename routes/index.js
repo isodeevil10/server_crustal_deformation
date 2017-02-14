@@ -560,7 +560,7 @@ router.post('/postsitename', function (req, res, next) {
 /* Get get site information Service. */
 router.get('/sitename', function (req, res, next) {
     try {
-        
+         
         req.getConnection(function (err, conn) {
             if (err) {
                 console.error('SQL Connection error: ', err);
