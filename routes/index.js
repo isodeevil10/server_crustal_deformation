@@ -83,10 +83,9 @@ router.post('/antennainformation', function (req, res, next) {
             } else {
                 var insertSql3 = "INSERT INTO antenna_information SET ?";
                 var insertValues3 = {
-                    "antenna_serialnumber": reqObj.serialnumber,
-                    "antenna_charcode": reqObj.antennacharcode,
-                    "antenna_name": reqObj.antennaname,
-                    "antenna_type": reqObj.antennatype
+                    "antenna_serialnumber": reqObj.antenna_serialnumber,
+                    "antenna_partnumber": reqObj.antenna_partnumber,
+                    "antenna_type": reqObj.antenna_type
 
                 };
                 var query = conn.query(insertSql3, insertValues3, function (err, result) {
@@ -161,7 +160,7 @@ router.post('/powersourceinformation', function (req, res, next) {
             } else {
                 var insertSql5 = "INSERT INTO power_source SET ?";
                 var insertValues5 = {
-                   "ps_serial_number": reqObj.powersourceserial,
+                   "ps_serial_number": reqObj.ps_serial_number,
                    "comment":reqObj.comment
                    
                 
@@ -376,11 +375,9 @@ try {
             var city = reqObj.city;
             var province = reqObj.province;
             var gallery_name = reqObj.gallery_name;
-         
-           
-
+            var image_name = reqObj.image_name;
             var query = conn.query(
-                "CAll siteiformation("+"'"+site_name+"','"+last_update+"','"+latitude+"','"+longitude+"','"+receiver_sn+"','"+antenna_sn+"','"+powersource_sn+"','"+contact_id+"','"+address_one+"','"+address_two+"','"+city+"','"+province+"','"+gallery_name+"')",
+                "CAll siteiformation("+"'"+site_name+"','"+last_update+"','"+latitude+"','"+longitude+"','"+receiver_sn+"','"+antenna_sn+"','"+powersource_sn+"','"+contact_id+"','"+address_one+"','"+address_two+"','"+city+"','"+province+"','"+gallery_name+"','"+image_name+"')",
              function (err, result) {
                 if (err) { console.log(query)
                     console.error('SQL error: ', err);
@@ -588,22 +585,15 @@ router.get('/sitename', function (req, res, next) {
 
 
 /* Get get gps staff information Service. */
-router.get('/gpsstaffname', function (req, res, next) {
+router.get('/gpsstaffs', function (req, res, next) {
     try {
-        // var name = req.param('id');
-        // //var employee_name = req.param('employee_name');
-        // /*  var query = url.parse(req.url,true).query;
-        //           console.log(query);
-        // var roleId = query.roleId;
-        // var deptId = query.deptId;*/
-        // console.log(name);
-        //console.log(employee_name);
+       
         req.getConnection(function (err, conn) {
             if (err) {
                 console.error('SQL Connection error: ', err);
                 return next(err);
             } else {
-               var query= conn.query('SELECT first_name, last_name from gps_staff_info', function (err, rows, fields) {
+               var query= conn.query('SELECT * from gps_staff_info', function (err, rows, fields) {
                     if (err) {console.log(query)
                         console.error('SQL error: ', err);
                         return next(err);
@@ -639,7 +629,7 @@ router.get('/allreceiversn', function (req, res, next) {
                 console.error('SQL Connection error: ', err);
                 return next(err);
             } else {
-               var query= conn.query('SELECT serial_number, receiver_type, part_number from receiver_information', function (err, rows, fields) {
+               var query= conn.query('SELECT * from receiver_information', function (err, rows, fields) {
                     if (err) {console.log(query)
                         console.error('SQL error: ', err);
                         return next(err);
@@ -667,7 +657,7 @@ router.get('/allantennasn', function (req, res, next) {
                 console.error('SQL Connection error: ', err);
                 return next(err);
             } else {
-               var query= conn.query('SELECT antenna_serialnumber, antenna_charcode, antenna_name,antenna_type from antenna_information', function (err, rows, fields) {
+               var query= conn.query('SELECT * from antenna_information', function (err, rows, fields) {
                     if (err) {console.log(query)
                         console.error('SQL error: ', err);
                         return next(err);
@@ -698,7 +688,7 @@ router.get('/allpowersourcesn', function (req, res, next) {
                 console.error('SQL Connection error: ', err);
                 return next(err);
             } else {
-               var query= conn.query('SELECT ps_serial_number, comment from powersource', function (err, rows, fields) {
+               var query= conn.query('SELECT * from powersource', function (err, rows, fields) {
                     if (err) {console.log(query)
                         console.error('SQL error: ', err);
                         return next(err);
