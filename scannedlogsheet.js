@@ -1,42 +1,40 @@
 var router = require("./routes/index")
 var multer = require('multer');
+
 var storage = multer.diskStorage({
   destination: function (req, file, callback) {
-    callback(null, './uploads/siteimage');
+    callback(null, './uploads/logsheet');
   },
   filename: function (req, file, callback) {
+    
     callback(null, +Date.now()+'-'+file.originalname);
   }
 });
 var upload = multer({
   storage: storage
-}).single('userPhoto'); 
-router.get('/image', function (req, res) {
-  res.sendFile(__dirname + "/index.html");
+}).single('userPhoto2');
+
+router.get('/scaned', function (req, res) {
+  res.sendFile(__dirname + "/scan.html");
 });
-router.post('/api/photo', function (req, res) {
+
+router.post('/api/photo2', function (req, res) {
   upload(req, res, function (err) {
     if (err) {
       return res.end("Error uploading file.");
     }
-
-    let site_name = req.body.site_name
-    let image_name = req.body.image_name
-    let image_path = req.file.path
-    let image_clas_id = req.body.class_id
-
+    let scan_code = req.body.scan_code
+    let scan_image_path = req.body.scan_image_path
     try {
       req.getConnection(function (err, conn) { 
         if (err) {
           console.error('SQL Connection error: ', err);
           return next(err);
         } else {
-          var insertSql2 = "INSERT INTO site_images SET ?";
+          var insertSql2 = "INSERT INTO scanned_logsheet SET ?";
           var insertValues2 = {
-            "image_clas_id": image_clas_id,
-            "image_path": image_path,
-            // "site_name": site_name,
-            "image_name": image_name
+            "scan_code": scan_code,
+            "scan_image_path": scan_image_path 
           };
           var query = conn.query(insertSql2, insertValues2, function (err, result) {
             if (err) {

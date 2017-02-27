@@ -184,10 +184,6 @@ router.post('/powersourceinformation', function (req, res, next) {
     }
 });
 
-
-
-
-
 /* input contact person details */
 
 router.post('/contactpersondetails', function (req, res, next) {
@@ -291,8 +287,9 @@ try {
             return next(err);
         } else {
            
-            var logsheet_date             = reqObj.logsheet_date;  
-            var site_id                   = reqObj.site_id  ;
+            var logsheet_date             = reqObj.logsheet_date; 
+            var fieldwork_id              = fieldwork_id;
+            var site_name                   = reqObj.site_name  ;
             var julian_day                = reqObj.julian_day; 
             var marker                    = reqObj.marker  ;
             var receiver_id               = reqObj.receiver_id ;
@@ -305,7 +302,7 @@ try {
             var time_start                = reqObj.time_start; 
             var time_end                  = reqObj.time_end ;
             var azimuth                   = reqObj.azimuth  ;
-            var scan_log_id               = reqObj.scan_log_id; 
+            var scan_code                 = reqObj.scan_code; 
             var power_source              = reqObj.power_source;  
             var failure_time              = reqObj.failure_time ; 
             var receiver_status           = reqObj.receiver_status; 
@@ -320,23 +317,72 @@ try {
             var local_tcp_port            = reqObj.local_tcp_port;
             var latittude                 = reqObj.latittude  ;
             var longitude                 = reqObj.longitude  ;
-            // var site_sketch_id            = reqObj.site_sketch_id ; 
+            var site_sketch_code        = reqObj.site_sketch_code ; 
             var observed_situation        = reqObj.observed_situation  ;
             var lodging_road_information  = reqObj.lodging_road_information;
-            // var contact_id                = reqObj.contact_id ;
+            var contact_id                = reqObj.contact_id ;
             var others                    = reqObj.others 
            
 
-            var query = conn.query("CAll logsheet("+"'" +logsheet_date +"', '"+ julian_day+ "', '" +marker+ "','" +height+ "', '" +north+ "', '" +east +"', '" +south+ "', '"+ west+ "', '"+ time_start +"', '"+ time_end+ "', '"+ azimuth+ "', '" +failure_time+ "', '"+ receiver_status +"', '" +antenna_status+ "', '"+ rod_num+ "', '" +rod_correction+ "', '"+ avg_slant_height+ "', '"+ ip_add +"', '" +netmask+ "', '" +gateway+ "', '" +dns+ "', '" +local_tcp_port+ "', '" +latittude + "', '" +longitude+"', '"+ observed_situation+ "', '" +lodging_road_information+ "', '" +others+ "')",
+            var query = conn.query("CAll logsheet("+"'" +logsheet_date +"', '"+ julian_day+ "', '" +marker+ "','" +height+ "', '" +north+ "', '" +east +"', '" +south+ "', '"+ west+ "', '"+ time_start +"', '"+ time_end+ "', '"+ azimuth+ "', '" +failure_time+ "', '"+ receiver_status +"', '" +antenna_status+ "', '"+ rod_num+ "', '" +rod_correction+ "', '"+ avg_slant_height+ "', '"+ ip_add +"', '" +netmask+ "', '" +gateway+ "', '" +dns+ "', '" +local_tcp_port+ "', '" +latittude + "', '" +longitude+"', '"+ observed_situation+ "', '" +lodging_road_information+ "', '" +others+ "','"+site_sketch_code+"','"+contact_id+"','"+site_name+"','"+fieldwork_id+"','"+scan_code+"')",
              function (err, result) {
                 if (err) { console.log(query)
-                    console.error('SQL error: ', err);
+                    console.error('SQL error: ', err);  
                     return next(err);
                 }
                 console.log(result);
                 var test_Id = result.insertId;
                 res.json({
                     "test_id": test_Id 
+                });
+            });
+        } 
+    }); 
+} catch (ex) { 
+    console.error("Internal error:" + ex); 
+    return next(ex);
+}
+});
+
+
+/**  input cont logsheet data*/
+router.post('/contlogsheet', function (req, res, next) {
+try {
+    var reqObj = req.body;
+    console.log(reqObj);
+    req.getConnection(function (err, conn) {
+        if (err) {
+            console.error('SQL Connection error: ', err);
+            return next(err);
+        } else {
+           
+            var updated_date              = reqObj.updated_date; 
+            var fieldwork_id              = fieldwork_id;
+            var site_name                 = reqObj.site_name  ;
+            var julian_day                = reqObj.julian_day; 
+            var updated_time              = reqObj.updated_time  ;
+            var p_receiver_sn               = reqObj.p_receiver_sn ;
+            var updated_receiver_sn                = reqObj.updated_receiver_sn ;
+            var updated_antenna_sn                    = reqObj.updated_antenna_sn ;
+            var p_antenna_sn                    = reqObj.p_antenna_sn ;
+            var p_antenna_height                      = reqObj.p_antenna_height ;
+            var updated_antenna_height                     = reqObj.updated_antenna_height;
+            var power_failure           = reqObj.power_failure;
+            var battery_condition    = reqObj.battery_condition;
+            var charger_status     = reqObj.charger_status;
+            var note   = reqObj.note;
+
+
+            var query = conn.query("CAll contlogsheet("+"'" +updated_date +"', '"+ fieldwork_id+ "', '" +site_name+ "','" +julian_day+ "', '" +updated_time+ "', '" +p_receiver_sn +"', '" +updated_receiver_sn+ "', '"+ updated_antenna_sn+ "', '"+ p_antenna_sn +"', '"+ updated_antenna_height+ "', '"+ p_antenna_height+ "', '" +power_failure+ "', '"+ battery_condition +"', '" +charger_status+ "', '"+ note+ "')",
+             function (err, result) {
+                if (err) { console.log(query)
+                    console.error('SQL error: ', err);  
+                    return next(err);
+                }
+                console.log(result);
+                var test_Id = result.insertId;
+                res.json({
+                    "data": test_Id 
                 });
             });
         } 
